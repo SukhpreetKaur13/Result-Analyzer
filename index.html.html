@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Result Analyzer Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+<div class="bg-effects" aria-hidden="true">
+    <span class="orb orb-1"></span>
+    <span class="orb orb-2"></span>
+    <span class="orb orb-3"></span>
+</div>
+<nav>
+    <h2>Result Analyzer</h2>
+    <button id="menuBtn" class="menu-btn" type="button">☰</button>
+    <div class="nav-right" id="navRight">
+        <ul>
+            <li><a href="#overviewPanel" data-tab-link="overviewPanel">Overview</a></li>
+            <li><a href="#insightsPanel" data-tab-link="insightsPanel">Insights</a></li>
+            <li><a href="#goalsPanel" data-tab-link="goalsPanel">Goals</a></li>
+            <li><a href="#about">About</a></li>
+        </ul>
+        <div class="nav-tools">
+            <select id="themeSelect" title="Theme">
+                <option value="blue">Blue Theme</option>
+                <option value="green">Green Theme</option>
+                <option value="dark">Dark Theme</option>
+            </select>
+        </div>
+    </div>
+</nav>
+
+<section class="container">
+    <div class="welcome card">
+        <h3>Welcome, Student! 🎓</h3>
+        <p>Track marks, analyze patterns, and create a printable report card.</p>
+    </div>
+
+    <div class="tabs card">
+        <button class="tab-btn active" data-tab="overviewPanel">📊 Overview</button>
+        <button class="tab-btn" data-tab="insightsPanel">📈 Insights</button>
+        <button class="tab-btn" data-tab="goalsPanel">🎯 Goals</button>
+    </div>
+
+    <div class="panel panel-overview active" id="overviewPanel">
+        <div class="card section-card">
+            <h3>Input Section</h3>
+            <div class="toolbar-inline">
+                <input id="searchSubject" type="text" placeholder="Search subject...">
+                <select id="filterMarks">
+                    <option value="all">All Marks</option>
+                    <option value="high">High (>=75)</option>
+                    <option value="low">Low (<50)</option>
+                </select>
+            </div>
+            <div id="subjects">
+                <div class="row">
+                    <input type="text" placeholder="Subject Name">
+                    <input type="number" placeholder="Marks (0-100)" min="0" max="100" step="1">
+                    <button class="remove-btn" type="button" onclick="removeSubject(this)">✕</button>
+                </div>
+            </div>
+            <button type="button" onclick="addSubject()">+ Add Subject</button>
+            <button type="button" onclick="calculate()">Calculate</button>
+            <button id="resetBtn" type="button">Reset</button>
+        </div>
+
+        <div class="card result-card" id="resultCard">
+            <h3>Results Section</h3>
+            <div class="result-grid">
+                <div class="result-box"><span>Total</span><strong id="total">0</strong></div>
+                <div class="result-box"><span>Percentage</span><strong id="percent">0%</strong></div>
+                <div class="result-box"><span>Grade</span><strong id="grade">-</strong></div>
+                <div class="result-box"><span>Status</span><strong id="status">-</strong></div>
+            </div>
+            <p class="perf-level">Performance Level: <span id="levelTag" class="level-tag">-</span></p>
+            <p class="trend">Trend: <span id="trendText">-</span></p>
+            <div class="achievement-wrap">
+                <h4>Achievements 🏅</h4>
+                <div id="badges"></div>
+            </div>
+            <button id="printBtn" type="button">Download Report</button>
+        </div>
+
+        <div class="card chart-card">
+            <h3>Performance Chart</h3>
+            <div class="chart-grid">
+                <canvas id="chart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel" id="insightsPanel">
+        <div class="card section-card">
+            <h3>Insights Section 🧠</h3>
+            <div class="insight-grid">
+                <div class="mini-card"><span>Highest</span><strong id="highest">0</strong></div>
+                <div class="mini-card"><span>Lowest</span><strong id="lowest">0</strong></div>
+                <div class="mini-card"><span>Average</span><strong id="average">0</strong></div>
+                <div class="mini-card"><span>Vs Class Avg (70)</span><strong id="vsClass">-70</strong></div>
+            </div>
+            <p id="smartInsight" class="smart-insight">Add marks to view smart analysis.</p>
+            <p id="categoryBreakdown" class="smart-insight">Strong subjects: - | Weak subjects: -</p>
+            <div class="meter-wrap">
+                <p>Performance Meter</p>
+                <div class="meter"><div id="meterFill"></div></div>
+            </div>
+            <div id="subjectProgress"></div>
+        </div>
+        <div class="card section-card">
+            <h3>Attempt History (Last 3)</h3>
+            <ul id="attemptHistory" class="history-list"></ul>
+        </div>
+    </div>
+
+    <div class="panel" id="goalsPanel">
+        <div class="card section-card">
+            <h3>Goals Section 🎯</h3>
+            <div class="target-row">
+                <label for="targetInput">Target Percentage:</label>
+                <input id="targetInput" type="number" min="0" max="100" value="85">
+            </div>
+            <p id="targetMsg" class="target-msg"></p>
+            <div class="goal-track">
+                <p>Goal Progress</p>
+                <div class="meter"><div id="goalFill"></div></div>
+                <small id="goalText">Target: 85% | Current: 0% | Progress: 0%</small>
+            </div>
+        </div>
+        <div class="card section-card">
+            <h3>Report Card View 🧾</h3>
+            <table class="report-table" id="reportTable">
+                <thead>
+                <tr>
+                    <th>Subject</th>
+                    <th>Marks</th>
+                    <th>Grade</th>
+                </tr>
+                </thead>
+                <tbody></tbody>
+            </table>
+        </div>
+    </div>
+</section>
+
+<section id="about" class="about">
+    <div class="card">
+        <h3>About Me</h3>
+        <p><strong>Name:</strong> Sukhpreet Kaur</p>
+        <p><strong>University ID:</strong> 2511981243</p>
+        <p><strong>Course:</strong> B.E CSE</p>
+        <p><strong>University:</strong> Chitkara University, Himachal Pradesh</p>
+    </div>
+</section>
+
+<div id="toastContainer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
